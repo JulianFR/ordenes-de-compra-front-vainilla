@@ -1,0 +1,20 @@
+.ordenes--opciones {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ordenes button {
+  margin-top: 2em;
+  padding: 1em;
+  display: block;
+  width: 100%;
+}
+
+.producto.seleccionado:nth-child(odd) {
+  background: hsl(125, 10%, 60%);
+}
+
+.producto.seleccionado {
+  background: hsl(125, 10%, 50%);
+}

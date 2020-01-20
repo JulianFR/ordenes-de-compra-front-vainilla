@@ -1,0 +1,14 @@
+.cabecera__enlaces {
+  display: flex;
+  justify-content: space-around;
+  text-transform: uppercase;
+  list-style: none;
+}
+
+.cabecera__enlace {
+  text-decoration: none;
+}
+
+.titulo {
+  text-align: center;
+}

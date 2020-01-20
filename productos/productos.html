@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="../compartido/compartido.css">
+  <title>Ordenes de Compra</title>
+</head>
+
+<body>
+
+  <head>
+    <nav id="navegacion" class="navegacion">
+      <p id="navegacion-mostrar">---Mostrar Navegación---</p>
+      <ul id="navegacion-enlaces" class="navegacion__enlaces">
+        <li class="navegacion__enlace"><a href="../pagina-principal.html">Página Principal</a></li>
+        <li class="navegacion__enlace"><a href="../ordenes/ordenes.html">Órdenes</a></li>
+        <li class="navegacion__enlace"><a href="../usuarios/usuarios.html">Usuarios</a></li>
+      </ul>
+    </nav>
+  </head>
+  <main id="productos">
+    <h1 class="titulo">Productos</h1 class="titulo">
+    <form id="autenticacion" action="javascript:void(0)">
+      <p>Ingrese su usuario y contraseña para dar de alta un nuevo producto</p>
+      <label class="formulario__etiqueta" for="">Usuario</label>
+      <input id="autenticacion-nombre" class="formulario__campo" type="text">
+      <label class="formulario__etiqueta" for="">Contraseña</label>
+      <input id="autenticacion-contraseña" class="formulario__campo" type="password">
+      <button id="autenticacion-enviar" class="formulario__boton boton" type="button">Enviar</button>
+    </form>
+    <ul id="productos-listado" class="listado"></ul>
+    <nav class="paginado">
+      <button id="productos-paginado-anterior" class="boton" type="button">Anterior</button>
+      <button id="productos-paginado-siguiente" class="boton" type="button">Siguiente</button>
+    </nav>
+  </main>
+  <footer></footer>
+
+  <script src="../compartido/compartido.js" defer="true"></script>
+  <script src="./productos.js" defer="true"></script>
+</body>
+
+</html>

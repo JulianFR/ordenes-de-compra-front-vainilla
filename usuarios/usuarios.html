@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="../compartido/compartido.css">
+  <title>Ordenes de Compra</title>
+</head>
+
+<body>
+
+  <head>
+    <nav id="navegacion" class="navegacion">
+      <p id="navegacion-mostrar">---Mostrar Navegación---</p>
+      <ul id="navegacion-enlaces" class="navegacion__enlaces">
+        <li class="navegacion__enlace"><a href="../pagina-principal.html">Página Principal</a></li>
+        <li class="navegacion__enlace"><a href="../productos/productos.html">Productos</a></li>
+        <li class="navegacion__enlace"><a href="../ordenes//ordenes.html">Órdenes</a></li>
+      </ul>
+    </nav>
+  </head>
+  <main>
+    <h1 class="titulo">Usuarios</h1 class="titulo">
+    <form action="javascript:void(0)">
+      <h2 class="formulario__titulo">Nuevo Usuario</h2>
+      <label class="formulario__etiqueta" for="">Nombre</label>
+      <input id="usuario-nombre" class="formulario__campo" type="text">
+      <label class="formulario__etiqueta" for="">Contraseña</label>
+      <input id="usuario-contraseña" class="formulario__campo" type="password">
+      <label class="formulario__etiqueta" for="">Confirmar Contraseña</label>
+      <input id="usuario-contraseña-confirmar" class="formulario__campo" type="password">
+      <button id="usuario-enviar" class="formulario__boton boton" type="button">Enviar</button>
+    </form>
+  </main>
+  <footer></footer>
+
+  <script src="../compartido/compartido.js" defer="true"></script>
+  <script src="./usuarios.js" defer="true"></script>
+</body>
+
+</html>
