@@ -1,18 +1,26 @@
 (function () {
+  function ce({ x, i, c, t, e, a, p }) {
+    return crearElemento({ tipo: x, id: i, clases: c, texto: t, eventos: e, atributos: a, padre: p });
+  };
+
   function crearElemento({ id, tipo, texto, clases, eventos, padre, atributos }) {
     const elemento = document.createElement(tipo);
 
     if (id) { elemento.id = id; }
     if (texto) { elemento.innerText = texto; }
-    if (clases) { clases.forEach(clase => elemento.classList.add(clase)); }
-    if (eventos) {
-      eventos.forEach(({ nombre, manejador }) => {
-        if (nombre && manejador) { elemento.addEventListener(nombre, manejador); }
-      });
+    if (clases) {
+      if (typeof (clases) === "string") elemento.className = clases;
+      else if (Array.isArray(clases)) clases.forEach(clase => elemento.classList.add(clase));
     }
+    if (eventos) {
+      for (const clave in eventos) {
+        elemento.addEventListener(clave, eventos[clave]);
+      }
+    }
+
     if (atributos) {
       atributos.forEach(({ nombre, valor }) => {
-        if (nombre && valor) { elemento.setAttribute(nombre, valor); }
+        if (nombre && valor !== null || valor !== undefined) { elemento.setAttribute(nombre, valor); }
       });
     }
     if (padre) { padre.appendChild(elemento); }
@@ -33,23 +41,14 @@
 
     while (lista.hasChildNodes()) lista.removeChild(lista.firstChild);
 
-    elementosMostrados.forEach(elemento => lista.appendChild(conversorHtml(elemento)));
-  };
-
-  function agregarProducto({ id, nombre, precio }) {
-    const producto = crearElemento({ tipo: "li", clases: ["producto"] });
-
-    producto.appendChild(crearElemento({ tipo: "span", texto: nombre }));
-    producto.appendChild(crearElemento({ tipo: "span", texto: `$${precio}` }));
-    producto.setAttribute("data-id", id);
-
-    return producto;
+    elementosMostrados.forEach(elemento => lista.appendChild(conversorHtml ? conversorHtml(elemento) : elemento.dibujar()));
+    return lista;
   };
 
   function reemplazarContenido(contenedor, contenido) {
     while (contenedor.hasChildNodes()) { contenedor.removeChild(contenedor.firstChild) };
 
-    contenedor.appendChild(contenido);
+    if (contenido !== null && contenido !== undefined) contenedor.appendChild(contenido);
   }
 
   function mostrarNavegacion(ocultar = false) {
@@ -62,5 +61,5 @@
     setTimeout(mostrarNavegacion.bind(this, true), 5000);
   });
 
-  window.compartido = { crearElemento, agregarProducto, cargarListado, reemplazarContenido };
+  window.compartido = { ce, crearElemento, cargarListado, reemplazarContenido };
 })()

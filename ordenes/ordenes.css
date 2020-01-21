@@ -18,3 +18,10 @@
 .producto.seleccionado {
   background: hsl(125, 10%, 50%);
 }
+
+.listado__orden {
+  text-align: center;
+  background: hsl(125, 0%, 70%);
+  padding: 1em;
+  margin-top: 1em;
+}

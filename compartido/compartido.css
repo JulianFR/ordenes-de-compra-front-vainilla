@@ -6,6 +6,20 @@ body {
   background: hsl(125, 0%, 50%);
 }
 
+footer {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+}
+
+footer .boton-volver {
+  background: hsl(125, 0%, 40%);
+  border: none;
+  width: 100%;
+  padding: 2em;
+}
+
 .boton {
   padding: 0.5em 2em;
   margin: 1em auto;
@@ -15,8 +29,15 @@ body {
   border-radius: 5px;
 }
 
+.boton--ancho {
+  margin-top: 2em;
+  padding: 1em;
+  display: block;
+  width: 100%;
+}
+
 .navegacion {
-  background: hsl(125, 0%, 60%);
+  background: hsl(125, 0%, 40%);
   text-align: center;
 }
 
@@ -70,7 +91,8 @@ body {
   display: block;
 }
 
-.listado {
+.lista {
+  list-style: none;
   margin: 0;
   padding: 0;
 }

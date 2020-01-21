@@ -1,8 +1,20 @@
 "use strict";
 
 (function () {
-  const { autenticarUsuario, cargarListado, crearElemento, agregarProducto } = { ...window.compartido };
+  const { cargarListado, crearElemento, reemplazarContenido } = { ...window.compartido };
+  const { cargarAutenticacion } = { ...autenticacion };
   delete window.compartido;
+  delete window.autenticacion;
+
+  function crearProducto({ id, nombre, precio }) {
+    const producto = crearElemento({ tipo: "li", clases: ["producto"] });
+
+    producto.appendChild(crearElemento({ tipo: "span", texto: nombre }));
+    producto.appendChild(crearElemento({ tipo: "span", texto: `$${precio}` }));
+    producto.setAttribute("data-id", id);
+
+    return producto;
+  };
 
   //ordenes
   function refrescarProductos() {
@@ -13,7 +25,7 @@
           .then(function (productosJson) {
             productos = productosJson;
             productosPagina = 0;
-            cargarListado(productosElemento, productos, productosPagina, PRODUCTOS_POR_PAGINA, agregarProducto);
+            cargarListado(productosElemento, productos, crearProducto, { pagina: productosPagina, elementosPagina: PRODUCTOS_POR_PAGINA });
           })
       });
   }
@@ -29,18 +41,19 @@
   }
 
   function crearFormularioProductos() {
-    const formulario = crearElemento({ tipo: "form" });
+    const padre = crearElemento({ tipo: "form", id: "productos-formulario" });
     const nombreCampo = crearElemento({ tipo: "input", clases: ["formulario__campo"] });
     const precioCampo = crearElemento({ tipo: "input", clases: ["formulario__campo"] });
 
-    formulario.setAttribute("action", "javascript:void(0)");
-    formulario.appendChild(crearElemento({ tipo: "h2", texto: "Nuevo Producto", clases: ["formulario__titulo"] }));
-    formulario.appendChild(crearElemento({ tipo: "label", texto: "Nombre", clases: ["formulario__etiqueta"] }));
-    formulario.appendChild(nombreCampo);
-    formulario.appendChild(crearElemento({ tipo: "label", texto: "Precio", clases: ["formulario__etiqueta"] }));
-    formulario.appendChild(precioCampo);
-    formulario.appendChild(crearElemento({
-      tipo: "button", texto: "Agregar", clases: ["formulario__boton", "boton"], eventos: [{
+    padre.setAttribute("action", "javascript:void(0)");
+
+    crearElemento({ tipo: "h2", texto: "Nuevo Producto", clases: ["formulario__titulo"], padre });
+    crearElemento({ tipo: "label", texto: "Nombre", clases: ["formulario__etiqueta"], padre });
+    padre.appendChild(nombreCampo);
+    crearElemento({ tipo: "label", texto: "Precio", clases: ["formulario__etiqueta"], padre });
+    padre.appendChild(precioCampo);
+    crearElemento({
+      tipo: "button", texto: "Agregar", clases: ["formulario__boton", "boton"], padre, eventos: [{
         nombre: "click",
         manejador: function () {
           fetch("http://127.0.0.1:3000/productos", {
@@ -58,9 +71,9 @@
           })
         }
       }]
-    }));
+    });
 
-    document.getElementById("productos").insertBefore(formulario, document.getElementById("productos-listado"));
+    return padre;
   }
 
   //ordenes
@@ -77,30 +90,20 @@
   document.getElementById("productos-paginado-anterior").addEventListener("click", function () {
     if (productosPagina !== retrocederPagina(productosPagina)) {
       productosPagina = productosPagina - 1;
-      cargarListado(productosElemento, productos, productosPagina, PRODUCTOS_POR_PAGINA, agregarProducto);
+      cargarListado(productosElemento, productos, productosPagina, PRODUCTOS_POR_PAGINA, crearProducto);
     }
   });
 
   document.getElementById("productos-paginado-siguiente").addEventListener("click", function () {
     if (productosPagina !== avanzarPagina(productosPagina, PRODUCTOS_POR_PAGINA)) {
       productosPagina = productosPagina + 1;
-      cargarListado(productosElemento, productos, productosPagina, PRODUCTOS_POR_PAGINA, agregarProducto);
+      cargarListado(productosElemento, productos, productosPagina, PRODUCTOS_POR_PAGINA, crearProducto);
     }
   });
 
-  document.getElementById("autenticacion-enviar").addEventListener("click", function () {
-    const nombre = document.getElementById("autenticacion-nombre").value;
-    const contraseña = document.getElementById("autenticacion-contraseña").value;
+  const autenticacionContenedor = document.getElementById("autenticacion");
 
-    autenticarUsuario(nombre, contraseña)
-      .then(function () {
-        document.getElementById("autenticacion").remove();
-        crearFormularioProductos();
-      })
-      .catch(function () {
-        alert("Credenciales inválidas");
-      });
-  });
+  cargarAutenticacion(autenticacionContenedor, reemplazarContenido.bind(this, autenticacionContenedor, crearFormularioProductos()), () => alert("Credenciales inválidas"));
 
   refrescarProductos();
 })();
