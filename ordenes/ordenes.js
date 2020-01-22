@@ -1,7 +1,7 @@
 "use strict";
 
-const { ce, reemplazarContenido, crearElemento, cargarListado } = { ...compartido };
-const { cargarAutenticacion } = { ...autenticacion };
+const { ce, reemplazarContenido, cargarListado } = { ...compartido };
+const { dibujarFormularioAutenticacion, Credenciales } = { ...autenticacion };
 const { OrdenDetalle } = { ...componentes };
 
 delete window.compartido;
@@ -15,33 +15,32 @@ let autenticado = false;
 let ordenes;
 
 function pintarProducto({ id, nombre, precio }) {
-  const padre = crearElemento({
-    tipo: "li", clases: ["producto"], atributos: [{ nombre: "data-id", valor: id }], eventos: [{
-      nombre: "click",
-      manejador: function () {
+  const p = ce({
+    x: "li", c: "producto", a: { "data-id": id }, e: {
+      click: function () {
         this.classList.contains("seleccionado") ? this.classList.remove("seleccionado") : this.classList.add("seleccionado");
       }
-    }]
+    }
   });
 
-  crearElemento({ tipo: "span", texto: nombre, padre });
-  crearElemento({ tipo: "span", texto: `$${precio}`, padre });
+  ce({ x: "span", t: nombre, p });
+  ce({ x: "span", t: `$${precio}`, p });
 
-  return padre;
+  return p;
 };
 
 function mostrarFormulario(contenedor) {
-  const padre = crearElemento({ tipo: "form", clases: ["formulario"] });
-  const ordenNombre = crearElemento({ tipo: "input", clases: ["formulario__campo"] });
+  const p = ce({ x: "form", c: "formulario" });
+  const ordenNombre = ce({ x: "input", c: "formulario__campo" });
 
-  padre.setAttribute("action", "javascript:void(0)");
+  p.setAttribute("action", "javascript:void(0)");
 
-  crearElemento({ tipo: "h2", texto: "Nueva Orden", clases: ["formulario__titulo"], padre });
-  crearElemento({ tipo: "label", clases: ["formulario__etiqueta"], texto: "Nombre", padre });
-  padre.appendChild(ordenNombre);
-  crearElemento({ tipo: "h2", texto: "Seleccione los productos", clases: ["formulario__titulo"], padre });
+  ce({ x: "h2", t: "Nueva Orden", c: "formulario__titulo", p });
+  ce({ x: "label", c: "formulario__etiqueta", t: "Nombre", p });
+  p.appendChild(ordenNombre);
+  ce({ x: "h2", t: "Seleccione los productos", c: "formulario__titulo", p });
 
-  const productosListado = crearElemento({ tipo: "div", padre });
+  const productosListado = ce({ x: "div", p });
 
   fetch("http://127.0.0.1:3000/productos")
     .then(function (respuesta) {
@@ -54,10 +53,9 @@ function mostrarFormulario(contenedor) {
         })
     });
 
-  crearElemento({
-    tipo: "button", texto: "Crear", clases: ["boton"], padre, eventos: [{
-      nombre: "click",
-      manejador: function () {
+  ce({
+    x: "button", t: "Crear", c: ["boton"], p, e: {
+      click: function () {
         const nombre = ordenNombre.value.trim();
         const productos = [];
         document
@@ -81,54 +79,54 @@ function mostrarFormulario(contenedor) {
         })
           .then(function (respuesta) {
             if (respuesta.ok) alert("Orden creada con éxito");
-            mostrarOpciones(padre);
+            mostrarOpciones(p);
           })
       }
-    }]
+    }
   });
 
-  reemplazarContenido(contenedor, padre);
+  reemplazarContenido(contenedor, p);
 }
 
 function mostrarOpciones(contenedor) {
   const lista = ce({ x: "ul", c: "ordenes--opciones" });
 
   ce({
-    x: "button", c: ["boton"], t: "Crear Nueva", p: ce({ x: "li", c: ["ordenes--opcion"], p: lista }),
-    e: {
+    x: "button", c: "boton", t: "Crear Nueva", p: ce({ x: "li", c: "ordenes--opcion", p: lista }), e: {
       click: function () {
-        if (autenticado) {
-          mostrarFormulario(contenedor)
-          mostrarVolver(() => mostrarOpciones(contenedor));
-        } else {
-          cargarAutenticacion(
-            contenedor,
-            () => { autenticado = true, mostrarFormulario(contenedor) },
-            () => alert("Credenciales inválidas")
-          );
-          mostrarVolver(() => mostrarOpciones(contenedor));
-        }
+        Credenciales.usuario
+          ? mostrarFormulario(contenedor)
+          : reemplazarContenido(PRINCIPAL, dibujarFormularioAutenticacion(() => mostrarFormulario(contenedor)));
+
+        mostrarVolver(() => mostrarOpciones(contenedor));
       }
     }
   });
 
-  ce({
-    x: "button", c: "boton", t: "Ver Listado", p: ce({ x: "li", c: "ordenes--opcion", p: lista }),
-    e: { click: () => mostrarOrdenesListado(contenedor) }
-  });
+  // ce({
+  //   x: "button", c: "boton", t: "Ver Listado", p: ce({ x: "li", c: "ordenes--opcion", p: lista }),
+  //   e: { click: () => mostrarOrdenesListado(contenedor) }
+  // });
 
   reemplazarContenido(contenedor, lista);
+
+  fetch("http://127.0.0.1:3000/ordenes")
+    .then(respuesta => respuesta.json())
+    .then(function (o) {
+      ordenes = o;
+      const lista = ce({ x: "ul", c: ["lista", "listado__ordenes"] });
+      PRINCIPAL.appendChild(cargarListado(lista, ordenes, pintarOrden));
+    });
 };
 
 function mostrarVolver(funcion) {
-  const boton = crearElemento({
-    tipo: "button", clases: ["boton-volver"], texto: "Volver", eventos: [{
-      nombre: "click",
-      manejador: function () {
+  const boton = ce({
+    x: "button", c: ["boton-volver"], t: "Volver", e: {
+      click: function () {
         funcion();
         reemplazarContenido(document.querySelector("footer"), null);
       }
-    }]
+    }
   });
   reemplazarContenido(document.querySelector("footer"), boton);
 }
@@ -138,7 +136,7 @@ function mostrarOrdenesListado(contenedor) {
     .then(respuesta => respuesta.json())
     .then(function (o) {
       ordenes = o;
-      const lista = crearElemento({ tipo: "ul", clases: ["lista", "listado__ordenes"] });
+      const lista = ce({ x: "ul", c: ["lista", "listado__ordenes"] });
 
       reemplazarContenido(contenedor, cargarListado(lista, ordenes, pintarOrden));
       mostrarVolver(() => mostrarOpciones(contenedor));
@@ -146,15 +144,50 @@ function mostrarOrdenesListado(contenedor) {
 }
 
 function mostrarOrdenDetalle(contenedor, orden) {
-  new OrdenDetalle(contenedor, orden);
+  const ordenDetalle = new OrdenDetalle(orden);
 
-  mostrarVolver(() => mostrarOrdenesListado(contenedor));
+  ordenDetalle
+    .obtenerDetalle()
+    .then(() => {
+      reemplazarContenido(PRINCIPAL, ordenDetalle.dibujar());
+      PRINCIPAL.appendChild(ce({
+        x: "button", c: "boton", t: "Hacer un Pedido", e: {
+          click: async () => {
+            if (!Credenciales.usuario) {
+              reemplazarContenido(PRINCIPAL, dibujarFormularioAutenticacion(() => mostrarOrdenDetalle(contenedor, orden)));
+            } else {
+              const pedidos = ordenDetalle.obtenerPedidos();
+
+              if (pedidos.length) {
+                const respuesta = await fetch("http://127.0.0.1:3000/pedidos", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ usuario: Credenciales.usuario.id, orden: orden.id, pedidos })
+                });
+
+                if (respuesta.ok) {
+                  alert("Pedido creado con éxito");
+                  mostrarOpciones(PRINCIPAL);
+                }
+              }
+            }
+          }
+        }
+      }));
+      PRINCIPAL.appendChild(ce({
+        x: "button", c: "boton", t: "Ver Pedidos", e: {
+          click: async () => reemplazarContenido(PRINCIPAL, (await ordenDetalle.obtenerResumen()).dibujar())
+        }
+      }));
+    });
+
+  mostrarVolver(() => mostrarOpciones(contenedor));
 }
 
 function pintarOrden({ id, nombre }) {
   return ce({
-    x: "li", c: ["listado__orden"], t: nombre, a: [{ nombre: "data-id", valor: id }], e: {
-      click: function () { mostrarOrdenDetalle(contenedor, ordenes[this.getAttribute("data-id")]); }
+    x: "li", c: "listado__orden", t: nombre, a: { "data-id": id }, e: {
+      click: function () { mostrarOrdenDetalle(PRINCIPAL, ordenes[this.getAttribute("data-id")]); }
     }
   });
 }

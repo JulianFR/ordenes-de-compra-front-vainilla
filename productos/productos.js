@@ -1,16 +1,16 @@
 "use strict";
 
 (function () {
-  const { cargarListado, crearElemento, reemplazarContenido } = { ...window.compartido };
-  const { cargarAutenticacion } = { ...autenticacion };
+  const { cargarListado, crearElemento, ce, reemplazarContenido } = { ...window.compartido };
+  const { Credenciales, dibujarFormularioAutenticacion } = { ...autenticacion };
   delete window.compartido;
   delete window.autenticacion;
 
   function crearProducto({ id, nombre, precio }) {
-    const producto = crearElemento({ tipo: "li", clases: ["producto"] });
+    const producto = crearElemento({ x: "li", c: ["producto"] });
 
-    producto.appendChild(crearElemento({ tipo: "span", texto: nombre }));
-    producto.appendChild(crearElemento({ tipo: "span", texto: `$${precio}` }));
+    producto.appendChild(crearElemento({ x: "span", t: nombre }));
+    producto.appendChild(crearElemento({ x: "span", t: `$${precio}` }));
     producto.setAttribute("data-id", id);
 
     return producto;
@@ -41,21 +41,16 @@
   }
 
   function crearFormularioProductos() {
-    const padre = crearElemento({ tipo: "form", id: "productos-formulario" });
-    const nombreCampo = crearElemento({ tipo: "input", clases: ["formulario__campo"] });
-    const precioCampo = crearElemento({ tipo: "input", clases: ["formulario__campo"] });
+    const p = ce({ x: "form", i: "productos-formulario", a: { action: "javascript:void(0)" } });
 
-    padre.setAttribute("action", "javascript:void(0)");
-
-    crearElemento({ tipo: "h2", texto: "Nuevo Producto", clases: ["formulario__titulo"], padre });
-    crearElemento({ tipo: "label", texto: "Nombre", clases: ["formulario__etiqueta"], padre });
-    padre.appendChild(nombreCampo);
-    crearElemento({ tipo: "label", texto: "Precio", clases: ["formulario__etiqueta"], padre });
-    padre.appendChild(precioCampo);
-    crearElemento({
-      tipo: "button", texto: "Agregar", clases: ["formulario__boton", "boton"], padre, eventos: [{
-        nombre: "click",
-        manejador: function () {
+    ce({ x: "h2", t: "Nuevo Producto", c: "formulario__titulo", p });
+    ce({ x: "label", t: "Nombre", c: "formulario__etiqueta", p });
+    const nombreCampo = ce({ x: "input", c: "formulario__campo", p });
+    ce({ x: "label", t: "Precio", c: "formulario__etiqueta", p });
+    const precioCampo = ce({ x: "input", c: "formulario__campo", p });
+    ce({
+      x: "button", t: "Agregar", c: ["formulario__boton", "boton"], p, e: {
+        click: function () {
           fetch("http://127.0.0.1:3000/productos", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -70,10 +65,10 @@
             }
           })
         }
-      }]
+      }
     });
 
-    return padre;
+    return p;
   }
 
   //ordenes
@@ -87,23 +82,23 @@
   //ordenes
   let productosPagina = 0;
 
-  document.getElementById("productos-paginado-anterior").addEventListener("click", function () {
-    if (productosPagina !== retrocederPagina(productosPagina)) {
-      productosPagina = productosPagina - 1;
-      cargarListado(productosElemento, productos, productosPagina, PRODUCTOS_POR_PAGINA, crearProducto);
-    }
-  });
+  // document.getElementById("productos-paginado-anterior").addEventListener("click", function () {
+  //   if (productosPagina !== retrocederPagina(productosPagina)) {
+  //     productosPagina = productosPagina - 1;
+  //     cargarListado(productosElemento, productos, productosPagina, PRODUCTOS_POR_PAGINA, crearProducto);
+  //   }
+  // });
 
-  document.getElementById("productos-paginado-siguiente").addEventListener("click", function () {
-    if (productosPagina !== avanzarPagina(productosPagina, PRODUCTOS_POR_PAGINA)) {
-      productosPagina = productosPagina + 1;
-      cargarListado(productosElemento, productos, productosPagina, PRODUCTOS_POR_PAGINA, crearProducto);
-    }
-  });
+  // document.getElementById("productos-paginado-siguiente").addEventListener("click", function () {
+  //   if (productosPagina !== avanzarPagina(productosPagina, PRODUCTOS_POR_PAGINA)) {
+  //     productosPagina = productosPagina + 1;
+  //     cargarListado(productosElemento, productos, productosPagina, PRODUCTOS_POR_PAGINA, crearProducto);
+  //   }
+  // });
 
-  const autenticacionContenedor = document.getElementById("autenticacion");
+  const PRINCIPAL = document.querySelector("main");
 
-  cargarAutenticacion(autenticacionContenedor, reemplazarContenido.bind(this, autenticacionContenedor, crearFormularioProductos()), () => alert("Credenciales inválidas"));
+  reemplazarContenido(PRINCIPAL, dibujarFormularioAutenticacion(() => reemplazarContenido(PRINCIPAL, crearFormularioProductos())));
 
   refrescarProductos();
 })();

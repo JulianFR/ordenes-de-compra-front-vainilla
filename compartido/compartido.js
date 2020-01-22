@@ -3,7 +3,7 @@
     return crearElemento({ tipo: x, id: i, clases: c, texto: t, eventos: e, atributos: a, padre: p });
   };
 
-  function crearElemento({ id, tipo, texto, clases, eventos, padre, atributos }) {
+  function crearElemento({ id, tipo, texto, clases, eventos = {}, padre, atributos = {} }) {
     const elemento = document.createElement(tipo);
 
     if (id) { elemento.id = id; }
@@ -12,17 +12,10 @@
       if (typeof (clases) === "string") elemento.className = clases;
       else if (Array.isArray(clases)) clases.forEach(clase => elemento.classList.add(clase));
     }
-    if (eventos) {
-      for (const clave in eventos) {
-        elemento.addEventListener(clave, eventos[clave]);
-      }
-    }
 
-    if (atributos) {
-      atributos.forEach(({ nombre, valor }) => {
-        if (nombre && valor !== null || valor !== undefined) { elemento.setAttribute(nombre, valor); }
-      });
-    }
+    for (const clave in eventos) elemento.addEventListener(clave, eventos[clave]);
+    for (const clave in atributos) elemento.setAttribute(clave, atributos[clave]);
+
     if (padre) { padre.appendChild(elemento); }
 
     return elemento;

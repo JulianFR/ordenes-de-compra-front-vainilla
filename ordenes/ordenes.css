@@ -5,6 +5,7 @@
 }
 
 .ordenes button {
+  background: hsl(214, 50%, 50%);
   margin-top: 2em;
   padding: 1em;
   display: block;
@@ -21,7 +22,30 @@
 
 .listado__orden {
   text-align: center;
-  background: hsl(125, 0%, 70%);
+  background: hsl(214, 0%, 50%);
   padding: 1em;
   margin-top: 1em;
+}
+
+orden-usuario, orden-pedido {
+  display: flex;
+  justify-content: space-between;
+}
+
+orden-usuario {
+  background: hsl(125, 0%, 60%);
+  padding: 1em;
+  margin: 0.5em 0;
+}
+
+orden-pedido {
+  margin-left: 1em;
+}
+
+.resumen__orden-total {
+  text-align: right;
+}
+
+.ocultar {
+  display: none;
 }
